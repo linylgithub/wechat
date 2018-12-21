@@ -16,7 +16,8 @@ app = Flask(__name__)
 def wx():
     if request.method == 'POST':
         try:
-            webData = request.form
+            webData = request.data
+            print request
             print 'Handle Post webdata is ', webData
             recMsg = receive.parse_xml(webData)
             if isinstance(recMsg, receive.Msg) and recMsg.MsgType == 'text':
