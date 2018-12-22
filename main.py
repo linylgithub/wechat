@@ -8,7 +8,11 @@
 """
 
 import hashlib
+
 from flask import Flask, request, jsonify
+
+import reply
+import receive
 
 app = Flask(__name__)
 
@@ -17,20 +21,27 @@ def wx():
     if request.method == 'POST':
         try:
             webData = request.data
-            print request
             print 'Handle Post webdata is ', webData
             recMsg = receive.parse_xml(webData)
-            if isinstance(recMsg, receive.Msg) and recMsg.MsgType == 'text':
+            if isinstance(recMsg, receive.Msg):
                 toUser = recMsg.FromUserName
                 fromUser = recMsg.ToUserName
-                content = 'test'
-                replyMsg = reply.TextMsg(toUser, fromUser, content)
-                return replyMsg
+                if recMsg.MsgType == 'text':
+                    content = '为了联盟的胜利！'
+                    replyMsg = reply.TextMsg(toUser, fromUser, content)
+                    return replyMsg.send()
+                elif recMsg.MsgType == 'image':
+                    mediaId = recMsg.MediaId
+                    replyMsg = reply.ImageMsg(toUser, fromUser, mediaId)
+                    return replyMsg.send()
+                else:
+                    return reply.Msg().send()
             else:
                 print '暂不处理'
                 return 'success'
         except Exception, Argment:
-            return Argment
+            print Argment
+            return str(Argment)
     else:
         try:
             data = request.args
