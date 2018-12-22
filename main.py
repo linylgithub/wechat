@@ -27,7 +27,8 @@ def wx():
                 toUser = recMsg.FromUserName
                 fromUser = recMsg.ToUserName
                 if recMsg.MsgType == 'text':
-                    content = '为了联盟的胜利！'
+                    content = recMsg.Content
+                    content = "祝您" + content + "快乐！"
                     replyMsg = reply.TextMsg(toUser, fromUser, content)
                     return replyMsg.send()
                 elif recMsg.MsgType == 'image':
